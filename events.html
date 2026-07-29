@@ -1,0 +1,105 @@
+<?php include "connect.php"; ?>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>BUC - Admin Dashboard</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        table, th, td {
+            border: 1px solid #333;
+        }
+        th, td {
+            padding: 10px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        .button-group {
+            margin-top: 15px;
+        }
+        .button-group button {
+            padding: 10px 20px;
+            background-color: #0077cc;
+            color: white;
+            border: none;
+            cursor: pointer;
+            margin-right: 10px;
+            border-radius: 5px;
+            font-weight: bold;
+        }
+        .button-group button:hover {
+            background-color: #005fa3;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="header-container">
+            <img src="logo.png" alt="University Logo" class="logo">
+            <div class="header-text">
+                <h1>British University College</h1>
+            </div>
+        </div>
+    </header>
+
+    <!-- Navigation -->
+    <nav>
+        <ul>
+            <li><a href="index.html">Home</a></li>
+            <li><a href="uniinfo.html">About us</a></li>
+            <li><a href="login.php">Login</a></li>
+            <li><a href="clubs.html">Clubs</a></li>
+            <li><a href="events.html">Activities & events</a></li>
+        </ul>
+    </nav>
+
+    <!-- Main Content -->
+    <main>
+        <h2>Admin Dashboard</h2>
+        <section class="content-box">
+            <p>Welcome, Admin! Use the buttons below:</p>
+
+            <div class="button-group">
+                <button onclick="window.location.href='studentM.php'">Go to Student Management</button>
+                <button onclick="window.location.href='login.php'">Logout</button>
+            </div>
+
+            <!-- Student Table -->
+            <h3>Registered Students</h3>
+            <?php
+                $sql = "SELECT * FROM register";
+                $result = mysqli_query($conn, $sql);
+
+                if (mysqli_num_rows($result) > 0) {
+                    echo "<table>";
+                    echo "<tr><th>Student ID</th><th>Password</th></tr>";
+
+                    while($row = mysqli_fetch_assoc($result)) {
+                        echo "<tr>";
+                        echo "<td>" . htmlspecialchars($row['student_id']) . "</td>";
+                        echo "<td>" . htmlspecialchars($row['student_password']) . "</td>";
+                        echo "</tr>";
+                    }
+
+                    echo "</table>";
+                } else {
+                    echo "<p>No students registered yet.</p>";
+                }
+            ?>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer>
+        <p>&copy; 2025 British University College | All Rights Reserved</p>
+    </footer>
+</body>
+</html>

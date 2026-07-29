@@ -1,0 +1,132 @@
+<?php
+include "connect.php";
+
+// Handle Add New Student
+if (isset($_POST['add'])) {
+    $new_id = $_POST['new_student_id'];
+    $new_pass = $_POST['new_student_password'];
+
+    if (!empty($new_id) && !empty($new_pass)) {
+        $sql = "INSERT INTO register (student_id, student_password) VALUES ('$new_id', '$new_pass')";
+        mysqli_query($conn, $sql);
+    }
+}
+
+// Handle Delete Student
+if (isset($_GET['delete_id'])) {
+    $delete_id = $_GET['delete_id'];
+    $sql = "DELETE FROM register WHERE student_id='$delete_id'";
+    mysqli_query($conn, $sql);
+}
+
+// Handle Edit Student
+if (isset($_POST['edit'])) {
+    $edit_id = $_POST['edit_student_id'];
+    $edit_pass = $_POST['edit_student_password'];
+    $sql = "UPDATE register SET student_password='$edit_pass' WHERE student_id='$edit_id'";
+    mysqli_query($conn, $sql);
+}
+
+// Handle Search
+$search_sql = "SELECT * FROM register";
+if (isset($_POST['search']) && !empty($_POST['search_id'])) {
+    $search_id = $_POST['search_id'];
+    $search_sql = "SELECT * FROM register WHERE student_id='$search_id'";
+}
+
+$result = mysqli_query($conn, $search_sql);
+?>
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Manage Student Information</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .btn {
+            padding: 10px 20px;
+            margin: 5px;
+            background-color: #0077cc;
+            color: white;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+        .btn:hover { background-color: #005fa3; }
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        table, th, td { border: 1px solid #333; }
+        th, td { padding: 10px; text-align: left; }
+        th { background-color: #f2f2f2; }
+        form.inline-form { display: inline; }
+        input[type=text], input[type=password] { padding: 5px; width: 120px; }
+    </style>
+</head>
+<body>
+<header>
+    <div class="header-container">
+        <img src="logo.png" alt="University Logo" class="logo">
+        <div class="header-text"><h1>Admin Dashboard</h1></div>
+    </div>
+</header>
+
+<nav>
+    <ul>
+        <li><a href="dashboard.php">Dashboard</a></li>
+        <li><a href="studentM.php" class="active">Manage Student Info</a></li>
+        <li><a href="login.php">Logout</a></li> <!--simple redirect-->
+    </ul>
+</nav>
+
+<main>
+    <h2>Manage Student Information</h2>
+
+    <!-- Add New Student -->
+    <form method="POST" action="">
+        <input type="text" name="new_student_id" placeholder="Student ID" required>
+        <input type="password" name="new_student_password" placeholder="Password" required>
+        <button type="submit" name="add" class="btn">Add Student</button>
+    </form>
+
+    <!-- Search Student -->
+    <form method="POST" action="" class="inline-form">
+        <input type="text" name="search_id" placeholder="Search by ID">
+        <button type="submit" name="search" class="btn">Search</button>
+        <button type="submit" name="show_all" class="btn">Show All</button>
+    </form>
+
+    <!-- Student Table -->
+    <table>
+        <tr>
+            <th>Student ID</th>
+            <th>Password</th>
+            <th>Actions</th>
+        </tr>
+        <?php while($row = mysqli_fetch_assoc($result)) { ?>
+        <tr>
+            <td><?php echo htmlspecialchars($row['student_id']); ?></td>
+            <td><?php echo htmlspecialchars($row['student_password']); ?></td>
+            <td>
+                <!-- Edit Form -->
+                <form method="POST" action="" class="inline-form">
+                    <input type="hidden" name="edit_student_id" value="<?php echo $row['student_id']; ?>">
+                    <input type="password" name="edit_student_password" placeholder="New Password" required>
+                    <button type="submit" name="edit" class="btn">Edit</button>
+                </form>
+                <!-- Delete Form -->
+                <form method="GET" action="" class="inline-form" onsubmit="return confirm('Are you sure?');">
+                    <input type="hidden" name="delete_id" value="<?php echo $row['student_id']; ?>">
+                    <button type="submit" class="btn">Delete</button>
+                </form>
+            </td>
+        </tr>
+        <?php } ?>
+    </table>
+</main>
+
+<footer>
+    <p>&copy; 2025 British University College | All Rights Reserved</p>
+</footer>
+</body>
+</html>

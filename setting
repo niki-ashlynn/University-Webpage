@@ -1,0 +1,107 @@
+<?php include "connect.php"; ?>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>BUC - Student Registration</title>
+    <link rel="stylesheet" href="style.css">
+    <script>
+        function validateForm() {
+            let studentId = document.getElementById("student_id").value.trim();
+            let password = document.getElementById("password").value.trim();
+            let club = document.getElementById("club").value;
+
+            // Validate Student ID
+            if (studentId === "") {
+                alert("Please enter your Student ID.");
+                return false;
+            }
+
+            // Validate Password length
+            if (password.length < 6) {
+                alert("Password must be at least 6 characters long.");
+                return false;
+            }
+
+            // Validate Club selection
+            if (club === "") {
+                alert("Please select a club.");
+                return false;
+            }
+
+            return true; // Form is valid
+        }
+    </script>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="header-container">
+            <img src="logo.png" alt="University Logo" class="logo">
+            <div class="header-text">
+                <h1>British University College</h1>
+            </div>
+        </div>
+    </header>
+
+    <!-- Navigation -->
+    <nav>
+        <ul>
+            <li><a href="index.html">Home</a></li>
+            <li><a href="uniinfo.html">About us</a></li>
+            <li><a href="login.php">Login</a></li>
+            <li><a href="clubs.html">Clubs</a></li>
+            <li><a href="events.html">Activities & events</a></li>
+        </ul>
+    </nav>
+
+    <!-- Main Content -->
+    <main>
+        <h2>Student Registration Form</h2>
+        <section class="content-box">
+            <form method="POST" action="" onsubmit="return validateForm()">
+                <label for="student_id">Student ID:</label><br>
+                <input type="text" id="student_id" name="student_id" required><br><br>
+
+                <label for="password">Create Password:</label><br>
+                <input type="password" id="password" name="student_password" required><br><br>
+
+                <label for="club">Choose Club:</label><br>
+                <select id="club" name="club" required>
+                    <option value="">-- Select a Club --</option>
+                    <option value="music">Music Club</option>
+                    <option value="tennis">Tennis Club</option>
+                    <option value="football">Football Club</option>
+                </select><br><br>
+
+                <!-- Styled Register Button -->
+                <button type="submit" name="register" class="button">Register</button>
+            </form>
+
+            <?php
+            if (isset($_POST['register'])) {
+                $student_id = $_POST['student_id'];
+                $student_password = $_POST['student_password'];
+                $club = $_POST['club']; // not inserted into DB(cos108)
+
+                // Insert only student_id and password into DB
+                $sql = "INSERT INTO register (student_id, student_password) 
+                        VALUES ('$student_id', '$student_password')";
+                
+                if (mysqli_query($conn, $sql)) {
+                    echo "<p>Student registered successfully!</p>";
+                    echo "<p>Club chosen: <strong>$club</strong></p>";
+                } else {
+                    echo "<p>Error: " . mysqli_error($conn) . "</p>";
+                }
+            }
+            ?>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer>
+        <p>&copy; 2025 British University College | All Rights Reserved</p>
+    </footer>
+</body>
+</html>
